@@ -158,9 +158,9 @@ const filter = function <T>(predicate: Predicate<T>): Operator<T, T> {
 };
 
 const filterOdd = filter((value: number) => value % 2 != 0);
-const filterFive=filter((value:number)=>value%5===0);
+const filterFive = filter((value: number) => value % 5 === 0);
 
-const squareOdd = of(11, 22, 33, 44,55).pipe(filterOdd,filterFive,square1);
+const squareOdd = of(11, 22, 33, 44, 55).pipe(filterOdd, filterFive, square1);
 //const OddSquare = square(double(filterOdd(anObservable$)));
 
 squareOdd.subscribe({
