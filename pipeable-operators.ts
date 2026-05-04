@@ -55,11 +55,21 @@ const first: Operator<unknown, unknown> = (
   //we should subscribe to input,read very first value ,and pass it
   // to the observer of the output observable and immediately  unsubscribe from input $
   const output$ = new Observable<unknown>((observer) => {
+    let isFirstItemSeen = false;
     const subscription = input$.subscribe({
       next(value: unknown) {
-        observer.next(value);
+        if (isFirstItemSeen) {
+          return;
+        } else {
+          observer.next(value);
+          isFirstItemSeen = true;
+        }
+
         //soon after we consume the first value of input  we need to unsubscribe
-        subscription.unsubscribe();
+
+        //we need to ensure we call unsubscribe inly in a  next event loop cycle .Otherwise this will be called without a proper value
+        //for subscription being assigned.the reason is the values are being produced synchronously
+        setTimeout(() => subscription.unsubscribe(), 0);
       },
     });
     return null;
@@ -83,8 +93,48 @@ firstDoubledSquare$.subscribe({
 });
 
 const firstDoubledSquare1$ = anObservable$.pipe(double, square, first);
-firstDoubledSquare1$.subscribe({
+const fs = firstDoubledSquare1$.subscribe({
   next(value) {
     console.log("From observables piping: ", value);
   },
 });
+fs.unsubscribe();
+
+const map = function <T, U>(transform: (value: T) => U): Operator<T, U> {
+  //TODO
+  //must return an operator that takes an input observable as an arguement,
+  //and then applies the transform function on each value emitted by input observable and then emits the transformed value t the output observable's observer
+
+  return (input$: Observable<T>): Observable<U> => {
+    //create an output observable in its executor
+    //need to observe the input observable For each value of input,
+    //apply transform and then emit  the result to the output observable's observer
+    const output$ = new Observable((observer) => {
+      const inputSubscription = input$.subscribe({
+        next(value) {
+          if (value) {
+            observer.next(transform(value));
+          }
+        },
+      });
+      return () => inputSubscription.unsubscribe();
+    });
+    return output$
+  };
+};
+
+const double1 = map<number, number>((value) => value * 2);
+const square1 = map<number, number>((value) => value * value);
+
+const structured = map<number, { value: number }>((value) => ({ value }));
+
+const doubleSquare = of(11, 22, 33).pipe(double1, square1, structured);
+
+doubleSquare.subscribe({
+  next(value) {
+    console.log(value);
+  },
+});
+
+
+
