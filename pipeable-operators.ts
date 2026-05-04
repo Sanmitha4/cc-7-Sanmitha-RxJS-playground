@@ -100,6 +100,8 @@ const fs = firstDoubledSquare1$.subscribe({
 });
 fs.unsubscribe();
 
+//MAP IN PIPEABLE OPERATOR
+
 const map = function <T, U>(transform: (value: T) => U): Operator<T, U> {
   //TODO
   //must return an operator that takes an input observable as an arguement,
@@ -119,7 +121,7 @@ const map = function <T, U>(transform: (value: T) => U): Operator<T, U> {
       });
       return () => inputSubscription.unsubscribe();
     });
-    return output$
+    return output$;
   };
 };
 
@@ -136,5 +138,32 @@ doubleSquare.subscribe({
   },
 });
 
+//FILTER IN PIPEable operator
+type Predicate<T> = (value: T) => boolean;
 
+const filter = function <T>(predicate: Predicate<T>): Operator<T, T> {
+  return (input$: Observable<T>): Observable<T> => {
+    const output$ = new Observable((observer) => {
+      const inputSubscription = input$.subscribe({
+        next(value: T) {
+          if (predicate(value)) {
+            observer.next(value);
+          }
+        },
+      });
+      return () => inputSubscription.unsubscribe();
+    });
+    return output$;
+  };
+};
 
+const filterOdd = filter((value: number) => value % 2 != 0);
+
+const squareOdd = of(11, 22, 33, 44).pipe(filterOdd, square1);
+//const OddSquare = square(double(filterOdd(anObservable$)));
+
+squareOdd.subscribe({
+  next(value) {
+    console.log(value);
+  },
+});
