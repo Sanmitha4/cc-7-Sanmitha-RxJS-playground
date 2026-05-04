@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "observable:usage": "node observable.usage.ts"
+    "observable:usage": "node observable.usage.ts",
+    "start": "npx tsx "
   },
   "keywords": [],
   "author": "",
