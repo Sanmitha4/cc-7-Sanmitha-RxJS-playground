@@ -11,6 +11,7 @@ import {
   switchMap,
   take,
   tap,
+  timer,
 } from "rxjs";
 const numberObservables$ = of(1, 2, 3, 4, 5); //emits numbers so t is a normal observable
 
@@ -135,4 +136,19 @@ const numberHOObservablesUsingPipe4$ = numberObservable1$
   .pipe(switchMap((value) => of(value)))
   .subscribe((v) => {
     console.log("Value Switch MAP:-", v);
+  });
+
+
+//   const obs2=of(3000,2000,1000,4000);
+//   let count =0
+//   obs2.pipe(switchMap(value=>timer(value).pipe(map(v=>count++)))).subscribe((value) => {
+//     console.log(" Switch MAP:-", value);
+//   }); THIS VALUE WILL BE 0 
+
+
+const obs2=of(3000,2000,1000,4000);
+//const obs2=of(1000,2000,3000,4000);
+  let count =40
+  obs2.pipe(switchMap(value=>interval(value).pipe(take(1),map(v=>count++)))).subscribe((value) => {
+    console.log(" Switch MAP:-", value);
   });
