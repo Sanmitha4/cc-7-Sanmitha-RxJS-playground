@@ -14,7 +14,10 @@ export class BehaviorSubject<T> extends Subject<T> {
   }
 
   override next(value: T) {
-    this.mostRecentValue = value;
+    this.currentValue = value;
     super.next(value);
+  }
+  constructor(initialValue:T){
+    this.currentValue=initialValue;
   }
 }

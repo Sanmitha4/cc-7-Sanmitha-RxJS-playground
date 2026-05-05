@@ -1,5 +1,5 @@
-import { of } from './creational-operators.js';
-import { Observable } from './observable.js';
+import { of } from 'rxjs';
+import { Observable } from 'rxjs';
 
 // An operator is a function that takes an observable and returns an observable
 export type Operator<T, U> = (input$: Observable<T>) => Observable<U>;

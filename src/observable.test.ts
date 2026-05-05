@@ -1,6 +1,6 @@
 // Example usage of Observable
 
-import { Observable } from './observable.js';
+import { Observable } from 'rxjs';
 
 // const observable = new Observable<number>((observer) => {
 //   console.log('Observable started');
